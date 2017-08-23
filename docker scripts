@@ -1,0 +1,12 @@
+docker rmi $(docker images -q -f dangling=true) #удалить untagged
+
+docker network create aud_pro_net
+
+docker run --name audpro_mongo --network=aud_pro_net -p 27017:27017 -v /home/gennady/mongo-data:/data/db -d mongo
+
+docker run -d --name audpro --network=aud_pro_net -p 8080:8080 --link audpro_mongo:audpro_mongo  beeline/audience_profile
+
+
+docker save -o /home/gennady/mongo mongo
+
+docker load -i /home/gennady/mongo

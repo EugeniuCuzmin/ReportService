@@ -1,0 +1,685 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Спецификация Report Service API для Профиля Аудитории от 22.08.2017",
+    "version": "0.0.4",
+    "title": "AUDPRO_API_REPORT"
+  },
+  "host": "dmpapi.beeline.ru",
+  "basePath": "/audpro",
+  "tags": [
+    {
+      "name": "Report Service",
+      "description": "Отгрузка готовых отчётов в сторону Заказчика (по запросу от Заказчика).  Отгрузка осуществляется только в сторону активных, действующих Договоров, по факту загрузки отправляется статистика для тарификации\n"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "description": "Схема аутентификации",
+      "in": "header",
+      "name": "X-API-Key"
+    }
+  },
+  "paths": {
+    "/report": {
+      "post": {
+        "summary": "Отчёты сформированы",
+        "description": "Извещение об окончании расчёта на кластере набора агрегированнах отчётов по заказу ",
+        "operationId": "addReport",
+        "tags": [
+          "Report Service"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Описание задачи на формирование отчётов",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewReportsSet"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "201 Created"
+          },
+          "400": {
+            "$ref": "#/responses/Malformed"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooMany"
+          },
+          "500": {
+            "$ref": "#/responses/InternalError"
+          },
+          "502": {
+            "$ref": "#/responses/DownFail"
+          },
+          "503": {
+            "$ref": "#/responses/OverLoad"
+          },
+          "504": {
+            "$ref": "#/responses/UnavialSystem"
+          }
+        }
+      },
+      "get": {
+        "summary": "Список отчётов, возвращаемых сервисом",
+        "description": "Список отчётов, доступных для заказов и получения в сервисе",
+        "externalDocs": {
+          "description": "#### \n |report_id|description|full_description|\n |----------------- | ---------------------------- | ------------------|\n |1|  Пол|  Количество мужчин и женщин|\n |2|  Возраст|  Количество абонентов в каждой из категорий возраста|\n |3| Возраст и пол|  Количество мужчин и женщин в каждой категории возраста|\n |4|  Доход|  Количество абонентов в каждой категории дохода|\n |5|  Интернет активность|1. Количество абонентов, которые пользовались хотя бы одной из соц.сетей            2. Количество абонентов, которые пользовались хотя бы одним из мессенджеров          3. Количество абонентов, которые пользовались игровыми приложений.           4. Количество абонентов, которые пользовались онлайн-кинотеатрами.           5. Количество абонентов, которые пользовались навигаторами.           6. Количество абонентов, которые польщовались видеохостингами.           7. Количество абонентов, которые пользовались музыкальными сервисами.|\n |6|  Социальные сети|  Количество абонентов, которые пользовались каждой соц.сетью(ВК, Одноклассники, Facebook, Instargram, Twitter)|\n |7|  Мессенджеры|  Количество абонентов, которые пользовались каждым мессенджером(Whatsapp, Viber, Telegram, Skype, Line, Facetime)|\n |8|  Путешествия|1. Количество абонентов, которые путешествовали за границу за последний месяц.2. Количество абонентов, которые путешествовали за границу за пол года.3. Количество абонентов, которые путешетсвоали по стране за последний месяц.4. Количество абонентов, которые путешествовали по стране за пол года.|\n |9|  Популярные направления путешествий по стране|  ТОП-10 регионов страны, в которые путешествовали абоненты за последний месяц, с указанием числа абонентов.|\n |10|  Популярные направления путешествий заграницу|  ТОП-10 стран, в которые путешествовали абоненты за последний месяц, с указанием числа абонентов.|\n |11|  Интересы: путешествия|1. Количество абонентов, которые интересуются проживанием с делализацией на подкатегории: -Санаторий -Хостел -Отель 2. Количество абонентов, которые интересуются транспортом с делализацией на подкатегории: -Самолет -Автобус -Аренда автомобиля -Ж/д билеты 3. Количество абонентов, которые интересуются визой и документами. 4. Количество абонентов, которые интересуются самостоятельными путешествиями.|\n |12|  Интересы: финансы |Количество уникальных абонентов, которые интересуются финансовыми продуктами с детализацией на подкатегории: -Интересуются кредитными картами -Интересуются потребительскими кредитами -Интересуются дебетовыми картами -Интересуются депозитами -Интересуются ипотекой -Интересуются автокредитом -Интересуются денежными переводами|\n |13|  Автомобилисты|1. Количество абонентов, у которых есть автомобиль. 2. Количество абонентов, которые планируют купить автомобиль. 3. Количество абонентов, которые планируют купить новый автомобиль. 4. Количество абонентов, которые планируют купить б/у автомобиль.|\n |14|  Домашние питомцы |1. Количество абонентов, у которых есть домашнее животное. 2. Количество абонентов, у которых есть кошки. 3. Количество абонентов, у которых есть собаки.|\n |15|  Популярные категории покупок|  ТОП-10 категорий покупок с количеством абонентов в каждой из них.|\n |16|  Операционные системы|  Количество абонентов по каждой операционной системе.|\n |17|  Интересы: одежда и обувь|Количество абонентов, которые интересовались покупкой одежды и обуви с детализацией на категории: -Детская одежда и обувь -Нижнее белье -Обувь -Одежда -Спортивная одежда и обувь -Аксессуары|\n |18|  Интересы: товары ежедневного потребления|Количество абонентов, которые интересовались покупкой товаров ежедневного потребления с  детализацией на категории: -Косметика и средства ухода -Посуда -Напитки -Бытовая химия -Личная гигиена и средства ухода|\n |19|  Интересы: бытовая техника и электроника|Количество абонентов, которые интересовались покупкой бытовой техники и электроники с деталезацией на категории: -Техника для персонального ухода -Стационарный компьютер -Товары для детей -Электронные книги -Игровые приставки -Техника для здоровья -Техника для кухни -Ноутбук -Мобильные телефоны -Навигаторы -Фото- и видеокамеры -Принтеры и сканеры -Умные часы и браслеты -Техника для спорта -Планшеты -Телевизоры|\n |20|  Образ жизни|Количество абонентов, которые попали в следующие сегменты по образу жизни: -Косплей -Развлечения:      -Кафе и рестораны      -Клубы      -Выставки и музеи      -Фестивали      -Театры|\n |21| Недвижимость|Количество абонентов, которые интересовались покупкой и арендой недвижимости: Покупка:  -Коммерческая недвижимость  -Загородная недвижимость  -Зарубежная недвижимость  -Земельный участок  -Квартиры в новостройке  -Вторичный рынок квартир  -Ищет квартиру Аренда: -Коммерческая недвижимость  -Квартиры  -Загородная недвижимость  -Земельный участок -Зарубежная недвижимость|\n",
+          "url": "https://"
+        },
+        "tags": [
+          "Report Service"
+        ],
+        "operationId": "getReportsList",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK — успешный запрос",
+            "schema": {
+              "$ref": "#/definitions/ListReports"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Malformed"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooMany"
+          },
+          "500": {
+            "$ref": "#/responses/InternalError"
+          },
+          "502": {
+            "$ref": "#/responses/DownFail"
+          },
+          "503": {
+            "$ref": "#/responses/OverLoad"
+          },
+          "504": {
+            "$ref": "#/responses/UnavialSystem"
+          }
+        }
+      }
+    },
+    "/report/{businessId}/{orderId}": {
+      "get": {
+        "summary": "Список отчётов по Заказу",
+        "description": "Список аггрегированных отчётов сформированных для конкретного Заказа",
+        "tags": [
+          "Report Service"
+        ],
+        "operationId": "getReportList",
+        "deprecated": false,
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "description": "Идентификатор Договора|ДС из АCRM (бизнесовый)",
+            "required": true,
+            "name": "businessId",
+            "type": "string",
+            "minimum": 1
+          },
+          {
+            "in": "path",
+            "description": "Идентификатор Заказа (в сервисе)",
+            "required": true,
+            "name": "orderId",
+            "type": "integer",
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of reports",
+            "schema": {
+              "$ref": "#/definitions/Report_List"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Malformed"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooMany"
+          },
+          "500": {
+            "$ref": "#/responses/InternalError"
+          },
+          "502": {
+            "$ref": "#/responses/DownFail"
+          },
+          "503": {
+            "$ref": "#/responses/OverLoad"
+          },
+          "504": {
+            "$ref": "#/responses/UnavialSystem"
+          }
+        }
+      }
+    },
+    "/report/{businessId}/{orderId}/{reportId}": {
+      "get": {
+        "summary": "Отчёт по Заказу",
+        "description": "отгружает отчёт по конкретному заказу\n",
+        "tags": [
+          "Report Service"
+        ],
+        "operationId": "getReport",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "description": "Идентификатор Договора|ДС из АCRM (бизнесовый)",
+            "required": true,
+            "name": "businessId",
+            "type": "string",
+            "minimum": 1
+          },
+          {
+            "in": "path",
+            "description": "Идентификатор Заказа (в сервисе)",
+            "required": true,
+            "name": "orderId",
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "in": "path",
+            "description": "Идентификатор отчёта (в сервисе)",
+            "required": true,
+            "name": "reportId",
+            "type": "integer",
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of reports filtered with values from Query String Parameters",
+            "schema": {
+              "$ref": "#/definitions/Report"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Malformed"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooMany"
+          },
+          "500": {
+            "$ref": "#/responses/InternalError"
+          },
+          "502": {
+            "$ref": "#/responses/DownFail"
+          },
+          "503": {
+            "$ref": "#/responses/OverLoad"
+          },
+          "504": {
+            "$ref": "#/responses/UnavialSystem"
+          }
+        }
+      }
+    },
+    "/report/health": {
+      "get": {
+        "summary": "Статус работы сервиса",
+        "description": "Статус работы сервиса Возвращает статус работы сервиса. This endpoint is not user-specific, and thus does not require an access token.\n",
+        "tags": [
+          "Report Service"
+        ],
+        "responses": {
+          "200": {
+            "description": "A Status of the Service"
+          },
+          "503": {
+            "description": "The server is unable to handle requests due to temporary overload "
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "Malformed": {
+      "description": "The request is malformed",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "Unauthorized": {
+      "description": "Unauthorized",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "Forbidden": {
+      "description": "The access to this resource is forbidden",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "NotFound": {
+      "description": "URI is not found",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "TooMany": {
+      "description": "There are too many requests that downstream systems cannot serve at the moment.",
+      "schema": {
+        "$ref": "#/definitions/Failure"
+      }
+    },
+    "InternalError": {
+      "description": "The server experiences an internal error.",
+      "schema": {
+        "$ref": "#/definitions/Failure"
+      }
+    },
+    "DownFail": {
+      "description": "One of the downstream systems experiences a failures.",
+      "schema": {
+        "$ref": "#/definitions/Failure"
+      }
+    },
+    "OverLoad": {
+      "description": "The server is unable to handle requests due to temporary overload.",
+      "schema": {
+        "$ref": "#/definitions/Failure"
+      }
+    },
+    "UnavialSystem": {
+      "description": "One of the downstream systems is unavailable.",
+      "schema": {
+        "$ref": "#/definitions/Failure"
+      }
+    }
+  },
+  "parameters": {
+    "StartDate": {
+      "in": "query",
+      "name": "startDate",
+      "required": false,
+      "type": "string",
+      "format": "date-time",
+      "minimum": 1,
+      "description": "Describes parameter to filter list of resources in response."
+    },
+    "BusinessId_query": {
+      "type": "string",
+      "description": "Идентификатор Договора из АCRM (бизнесовый)",
+      "name": "businessId",
+      "in": "query",
+      "required": false,
+      "minimum": 1
+    },
+    "ContractId": {
+      "name": "contractId",
+      "in": "path",
+      "description": "Идентификатор Договора (в сервисе)",
+      "required": true,
+      "type": "integer",
+      "minimum": 1
+    },
+    "OrderId": {
+      "name": "orderId",
+      "in": "path",
+      "description": "Идентификатор Заказа (в сервисе)",
+      "required": true,
+      "type": "integer",
+      "minimum": 1
+    },
+    "X-RequestId": {
+      "description": "Random-UUID Применяется для отладки",
+      "in": "header",
+      "name": "X-Request-ID",
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "Error": {
+      "title": "Сообщение об ошибке",
+      "description": "Error response structure",
+      "type": "object",
+      "properties": {
+        "errorId": {
+          "description": "An error identifier. It can be used for troubleshooting.",
+          "type": "integer"
+        },
+        "code": {
+          "description": "A code of the erroneous state.",
+          "type": "string"
+        },
+        "message": {
+          "description": "An error description. May carry placeholders to substitute error variables.",
+          "type": "string"
+        },
+        "variables": {
+          "description": "An array of variables to be substituted in the error message.",
+          "type": "array",
+          "items": {
+            "description": "A variable to be substituted in the error message.",
+            "properties": {
+              "variable": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Failure": {
+      "title": "Сообщение об отказе",
+      "description": "Сообщение об отказе",
+      "type": "object",
+      "properties": {
+        "failureid": {
+          "type": "integer",
+          "description": "A failure identifier. Can be used for troubleshooting."
+        },
+        "code": {
+          "type": "string",
+          "description": "A code of the failure state  * RATE_LIMIT - A request rate of a client exceeds the server capacity or a negotiated throughput. * DOWNSTREAM_FAILURE - One of downstream systems is down or experiences a failure state.\n",
+          "enum": [
+            "RATE_LIMIT",
+            "DOWNSTREAM_FAILURE"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "An error description. May carry placeholders to substitute failure variables."
+        },
+        "variables": {
+          "type": "array",
+          "description": "An array of variables to be substituted in the failure message.",
+          "items": {
+            "title": "variable",
+            "type": "string"
+          }
+        },
+        "recoverable": {
+          "type": "boolean",
+          "description": "Indicates if the request that caused the failure can be retried."
+        },
+        "retryFallback": {
+          "type": "array",
+          "description": "A description of the reasonable retry conditions.",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "retryFallbackTime": {
+                  "type": "integer",
+                  "description": "An interval in seconds the failed request may be reattempted."
+                },
+                "retryFallbackMultiplier": {
+                  "type": "integer",
+                  "description": "A multiplier to be applied to the retryFallbackTime to increase retry intervals in case of multiple reattempts."
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "NewReportsSet": {
+      "title": "Новый набор отчетов",
+      "description": "Сформированый набор отчётов по заказу orderId для клиента BusinessId",
+      "type": "object",
+      "properties": {
+        "BusinessId": {
+          "type": "string",
+          "description": "Идентификатор Договора из АCRM (бизнесовый)"
+        },
+        "orderId": {
+          "type": "string",
+          "description": "Идентификатор Заказа"
+        },
+        "reports": {
+          "description": "Список идентификаторов отчётов в этом заказе. Если список пуст - все отчёты",
+          "type": "array",
+          "items": [
+            {
+              "$ref": "#/definitions/report_uri"
+            }
+          ]
+        }
+      },
+      "xml": {
+        "name": "newReport"
+      }
+    },
+    "ListReports": {
+      "title": "Список отчётов доступных для формирования в сервисе",
+      "type": "object",
+      "properties": {
+        "List": {
+          "type": "array",
+          "items": [
+            {
+              "title": "Report",
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "integer",
+                  "description": "Уникальный идентификатор"
+                },
+                "description": {
+                  "description": "Описание отчёта",
+                  "type": "string"
+                },
+                "full_description": {
+                  "description": "Расширенное Описание отчёта",
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "xml": {
+        "name": "ListReports"
+      }
+    },
+    "Report_List": {
+      "title": "Список отчётов",
+      "description": "Список отчётов в сервисе с присвоенным reportId и датой формирования",
+      "type": "array",
+      "items": {
+        "title": "Report",
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "integer"
+          },
+          "reportDate": {
+            "description": "Дата формирования отчёта",
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/definitions/Report_Status"
+          }
+        }
+      },
+      "xml": {
+        "name": "Report_List"
+      }
+    },
+    "Report_Status": {
+      "title": "Статусы отчета",
+      "description": "Report Status/Статусы отчета",
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "in production",
+            "ready"
+          ]
+        }
+      },
+      "xml": {
+        "name": "Report_Status"
+      }
+    },
+    "report_uri": {
+      "title": "Ссылка на агрегированный отчёт",
+      "description": "идентификатор и uri на место хранения аггрегированного отчёта ",
+      "type": "object",
+      "properties": {
+        "reportId": {
+          "type": "integer"
+        },
+        "reportDate": {
+          "description": "Дата формирования отчёта",
+          "type": "string",
+          "format": "date-time"
+        },
+        "uri": {
+          "description": "полный урл, позволяющий получить готовый, ранее посчитанный отчёт в формате json посредством обращения к web-сервису (например, WebHDFS)",
+          "type": "string"
+        }
+      }
+    },
+    "Report": {
+      "title": "Отчёт",
+      "description": "A aggregated json report-file. Отчёт в сервисе соответствующий reportId",
+      "type": "object",
+      "properties": {
+        "reportId": {
+          "type": "integer",
+          "description": "Идентификатор отчёта"
+        },
+        "description": {
+          "type": "string",
+          "description": "Описание отчёта"
+        },
+        "orderId": {
+          "type": "string",
+          "description": "Идентификатор Заказа"
+        },
+        "BusinessId": {
+          "type": "string",
+          "description": "Идентификатор Договора из АCRM (бизнесовый)"
+        },
+        "tables": {
+          "type": "array",
+          "items": [
+            {
+              "title": "metadata",
+              "description": "Описание структуры таблицы",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Название таблицы (Мужчины,Женщины,Доход,Активность и интересы)"
+                },
+                "fields": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "title": "field",
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Наименование колонки"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Тип колонки",
+                          "enum": [
+                            "string",
+                            "number",
+                            "date-time"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "title": "data",
+              "description": "Данные таблицы",
+              "type": "array",
+              "items": {
+                "title": "row",
+                "type": "object"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
