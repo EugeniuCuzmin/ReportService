@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.philit.bigdata.domain.reports.Order;
 import ru.philit.bigdata.domain.reports.Report;
-import ru.philit.bigdata.domain.reports.ReportDTO;
 import ru.philit.bigdata.services.ReportService;
 
 /**
@@ -20,16 +20,14 @@ public class ReportController {
 
   /*POST*/
   @RequestMapping(value = "", method = RequestMethod.POST,
-          consumes = MediaType.APPLICATION_JSON_VALUE,
-          produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity generateReports(@RequestBody ReportDTO reportDTO){
-    reportService.save(reportDTO);
+          consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity generateReports(@RequestBody Order order){
+    reportService.save(order);
     return new ResponseEntity(HttpStatus.ACCEPTED);
   }
 
   /*GET*/
   @RequestMapping(value = "", method = RequestMethod.GET,
-          consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Iterable<Report>> getReportsForOrder(){
     return new ResponseEntity<Iterable<Report>>(reportService.findAll(), HttpStatus.OK);
@@ -52,9 +50,7 @@ public class ReportController {
       return new ResponseEntity<Report>(reportService.findByReportId(orderId, reportId), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/health", method = RequestMethod.GET,
-    consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value = "/health", method = RequestMethod.GET)
   public ResponseEntity  getReportHealth(){
     return new ResponseEntity(HttpStatus.OK);
   }
