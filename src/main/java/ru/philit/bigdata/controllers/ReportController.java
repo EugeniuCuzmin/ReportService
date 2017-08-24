@@ -19,7 +19,7 @@ public class ReportController {
     private ReportService reportService;
 
   /*POST*/
-  @RequestMapping(value = "/", method = RequestMethod.POST,
+  @RequestMapping(value = "", method = RequestMethod.POST,
           consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity generateReports(@RequestBody ReportDTO reportDTO){
@@ -28,7 +28,7 @@ public class ReportController {
   }
 
   /*GET*/
-  @RequestMapping(value = "/", method = RequestMethod.GET,
+  @RequestMapping(value = "", method = RequestMethod.GET,
           consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Iterable<Report>> getReportsForOrder(){
