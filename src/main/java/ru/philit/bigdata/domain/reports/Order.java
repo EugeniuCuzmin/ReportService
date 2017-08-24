@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReportDTO {
+public class Order {
   @Getter @Setter
   private String orderId;
   @Getter @Setter
