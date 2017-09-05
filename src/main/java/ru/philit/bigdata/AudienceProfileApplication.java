@@ -23,13 +23,4 @@ public class AudienceProfileApplication {
     return new ValidatingMongoEventListener(validator());
   }
 
-//  @Bean
-//  public MongoDbFactory mongoDbFactory(){
-//    return new SimpleMongoDbFactory(new MongoClient("localhost", 27017), "audience_profile");
-//  }
-//
-//  @Bean
-//  public MongoTemplate mongoTemplate(){
-//    return new MongoTemplate(mongoDbFactory());
-//  }
 }

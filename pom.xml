@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ru.philit.bigdata</groupId>
-  <artifactId>audience_profile</artifactId>
+  <artifactId>report</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <packaging>jar</packaging>
 
-  <name>audience_profile</name>
+  <name>report</name>
   <description></description>
 
   <parent>
@@ -25,9 +25,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
     <docker.image.prefix>beeline</docker.image.prefix>
+    <hadoop.version>2.4.1</hadoop.version>
   </properties>
 
   <dependencies>
+    <!--SPRING-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -49,6 +51,28 @@
           <artifactId>spring-boot-starter-tomcat</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security.kerberos</groupId>
+      <artifactId>spring-security-kerberos-client</artifactId>
+      <version>1.0.1.RELEASE</version>
+    </dependency>
+
+    <!--HADOOP-->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>${hadoop.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>${hadoop.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>${hadoop.version}</version>
     </dependency>
 
     <dependency>
@@ -97,7 +121,7 @@
   </dependencies>
 
   <build>
-    <finalName>audience_profile</finalName>
+    <finalName>report</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -107,7 +131,7 @@
       <plugin>
         <groupId>com.spotify</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.2.3</version>
+        <version>0.4.10</version>
         <configuration>
           <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
           <dockerDirectory>src/main/docker</dockerDirectory>

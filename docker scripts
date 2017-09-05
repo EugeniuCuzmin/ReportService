@@ -1,12 +1,65 @@
+#to build docker project
+mvn clean package docker:build
+
+docker stop $(docker ps -a -q)
+# Delete all containers
+docker rm $(docker ps -a -q)
+# Delete all images
+docker rmi $(docker images -q)
+
 docker rmi $(docker images -q -f dangling=true) #удалить untagged
 
 docker network create aud_pro_net
 
-docker run --name audpro_mongo --network=aud_pro_net -p 27017:27017 -v /home/gennady/mongo-data:/data/db -d mongo
+#to run containers
+#docker run --name audpro_mongo --network=aud_pro_net -p 27017:27017 -v /home/gennady/mongo-data:/data/db -d mongo
+docker run --name audpro_mongo --network=aud_pro_net -p 27017:27017 -v /c/mongo-data:/c/data/db -d mongo
 
-docker run -d --name audpro --network=aud_pro_net -p 8080:8080 --link audpro_mongo:audpro_mongo  beeline/audience_profile
+#docker run -d --name audpro --network=aud_pro_net -p 8080:8080 --link audpro_mongo:audpro_mongo  beeline/audience_profile
+docker run -d --name audpro --network=aud_pro_net -p 8080:8080 --link audpro_mongo:audpro_mongo beeline/report
 
 
-docker save -o /home/gennady/mongo mongo
+#to save docker images
+docker save -o report beeline/report
+#to load docker images on another machine, need to run them after
+docker load -i report
 
-docker load -i /home/gennady/mongo
+#to check active containers
+docker ps
+#to check all containers
+docker ps -a
+
+#to check logs after docker run
+docker logs container_name
+
+#docker does not starts spring on localhost. use to get ip
+docker-machine ip default
+
+*************
+docker stop audpro
+docker rm audpro
+docker ps
+docker ps -a
+
+curl localhost:8080/audpro/report/1/1/1
+curl 192.168.99.100:8080/audpro/report/health
+
+docker run -it --entrypoint sh <image-name>
+
+docker run -d --network=aud_pro_net -v krb5.conf:/etc/krb5.conf -v /dev/urandom:/dev/random --name kerberos -e BOOTSTRAP=0 sequenceiq/kerberos
+docker run -d --network=aud_pro_net -v /kerb:/etc/ -v /dev/urandom:/dev/random --name kerberos -e BOOTSTRAP=0 sequenceiq/kerberos
+
+docker rm kerberos
+
+kinit -V -kt evkuzmin.keytab EvKuzmin@BEE.VIMPELCOM.RU
+kinit EvKuzmin@BEE.VIMPELCOM.RU -k -t evkuzmin.keytab
+kinit -kt user2.keytab user1
+
+***********
+ktutil
+addent -password -p EvKuzmin@BEE.VIMPELCOM.RU -k 1 -e aes256-cts
+wkt evkuzmin2.keytab
+q
+
+docker stop audpro
+docker rm audpro

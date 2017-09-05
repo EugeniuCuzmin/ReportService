@@ -1,5 +1,6 @@
 FROM java:8
-#RUN cd /opt && ls
-ADD audience_profile.jar audience_profile.jar
-RUN sh -c 'touch audience_profile.jar'
-ENTRYPOINT ["java","-Dspring.data.mongodb.uri=mongodb://audpro_mongo/audience_profile","-Djava.security.egd=file:/dev/./urandom","-jar","/audience_profile.jar"]
+ADD report.jar report.jar
+ADD krb5.conf /etc/krb5.conf
+ADD evkuzmin.keytab /etc/evkuzmin.keytab
+RUN sh -c 'touch report.jar'
+ENTRYPOINT ["java","-Dspring.data.mongodb.uri=mongodb://audpro_mongo/report","-Djavax.net.debug=all","-Dsun.security.spnego.debug=true","-Dsun.security.krb5.debug=true","-Djava.security.krb5.conf=/etc/krb5.conf","-Djava.security.egd=file:/dev/./urandom","-jar","/report.jar"]

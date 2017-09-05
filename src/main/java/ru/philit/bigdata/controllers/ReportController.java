@@ -1,5 +1,8 @@
 package ru.philit.bigdata.controllers;
 
+import org.codehaus.jettison.json.JSONException;
+
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.philit.bigdata.domain.reports.Order;
 import ru.philit.bigdata.domain.reports.Report;
 import ru.philit.bigdata.services.ReportService;
+
+import java.net.URISyntaxException;
 
 /**
  * Created by gennady on 24/07/17.
@@ -41,13 +46,22 @@ public class ReportController {
     return new ResponseEntity<Iterable<Report>>(reportService.findByOrderId(orderId), HttpStatus.OK);
   }
 
+//  @RequestMapping(value = "/{businessId}/{orderId}/{reportId}", method = RequestMethod.GET,
+//          consumes = MediaType.APPLICATION_JSON_VALUE,
+//          produces = MediaType.APPLICATION_JSON_VALUE)
+//  public ResponseEntity<Report>  getReport(@PathVariable("businessId") String businessId,
+//                                           @PathVariable("orderId") String orderId,
+//                                           @PathVariable("reportId") Long reportId){
+//      return new ResponseEntity<Report>(reportService.findByReportId(orderId, reportId), HttpStatus.OK);
+//  }
+
   @RequestMapping(value = "/{businessId}/{orderId}/{reportId}", method = RequestMethod.GET,
-          consumes = MediaType.APPLICATION_JSON_VALUE,
-          produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Report>  getReport(@PathVariable("businessId") String businessId,
-                                           @PathVariable("orderId") String orderId,
-                                           @PathVariable("reportId") Long reportId){
-      return new ResponseEntity<Report>(reportService.findByReportId(orderId, reportId), HttpStatus.OK);
+    produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public ResponseEntity<String> getReport(@PathVariable("businessId") String businessId,
+                                               @PathVariable("orderId") String orderId,
+                                               @PathVariable("reportId") Long reportId) throws JSONException, URISyntaxException {
+    return new ResponseEntity<>(reportService.getReportJSON(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/health", method = RequestMethod.GET)
